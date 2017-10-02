@@ -1,0 +1,52 @@
+extends ~layouts/columns
+
+block title
+    | Validating requests
+
+block content
+    +slide_column(60)
+        +code(null, 'javascript')
+            include:escape ./request.js
+
+    +slide_column(40).l-column-middle
+        +code_focus('1-5').current-only
+            :markdown-it
+                Define required schemas
+
+        +code_focus('11-18').current-only
+            :markdown-it
+                Provide validation config
+
+
+        +code_focus('12').current-only
+            :markdown-it
+                `true` means that any value is allowed. In this case: all headers are OK.
+
+        +code_focus('13-15').current-only
+            :markdown-it
+                Specifies validation per route param
+
+        +code_focus('16').current-only
+            :markdown-it
+                `false` - no values allowed. This request must not have any query params.
+
+        +code_focus('17').current-only
+            :markdown-it
+                Payload of this request must match the `productSchema`.
+
+
+        +code_focus('22-26').current-only
+            :markdown-it
+                API responses can be validated too.
+
+        +code_focus('23').current-only
+            :markdown-it
+                Validate the response against the `productSchema`
+
+        +code_focus('24').current-only
+            :markdown-it
+                If the validation fails return the `500 Internal Server Error` response.
+
+        +code_focus('25').current-only
+            :markdown-it
+                Percent of requests to validate. 100% is perfect for development.

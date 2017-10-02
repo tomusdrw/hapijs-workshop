@@ -1,0 +1,38 @@
+extends ~layouts/columns
+
+block title
+    | Validation schemas
+
+block content
+    +slide_column(60)
+        +code(null, 'javascript')
+            include:escape ./basics.js
+
+    +slide_column(40).l-column-middle
+        +code_focus('1').current-only
+            :markdown-it
+                Install and import the `joi` library
+
+        +code_focus('3-5').current-only
+            :markdown-it
+                Create a validation schema
+
+
+        +code_focus('3').current-only
+            :markdown-it
+                The password must be a `string`...
+
+        +code_focus('4-5').current-only
+            :markdown-it
+                ...between 8 and 30 characters long.
+
+        +code_focus('7-8').current-only
+            :markdown-it
+                The `validate` method takes the value to validate and the schema to validate against.
+                It returns and object/promise-like that contains `error` and `value` properties.
+
+        +code_focus('10-11').current-only
+            :markdown-it
+                If there were any errors, their details will be shown in the `error` property.
+
+

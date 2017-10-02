@@ -1,0 +1,39 @@
+extends ~layouts/columns
+
+block title
+    | Handling templates
+
+block content
+    +slide_column(60)
+        +code(null, 'javascript')
+            include:escape ./static-files.js
+
+    +slide_column(40).l-column-middle
+        +code_focus('1').current-only
+            :markdown-it
+                Install the `vision` plugin and `ejs` templates package
+
+        +code_focus('12').current-only
+            :markdown-it
+                Register `vision` with the server
+
+        +code_focus('14-18').current-only
+            :markdown-it
+                `vision` extends the server object with `views` method used to provide configuration for views.
+
+        +code_focus('15').current-only
+            :markdown-it
+                Provide the templating engine. `vision` supports multiple out-of-the-box and allows custom handlers.
+
+        +code_focus('24').current-only
+            :markdown-it
+                On top of that, the `reply` interface was exetened with the `view` method.
+                It takes the template name and an object with data for the template as arguments.
+
+        +code_focus('34-35').current-only
+            :markdown-it
+                The `views/index.ejs` contains the tempalte.
+                All fields from the object provided to the template are available.
+
+
+

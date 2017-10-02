@@ -1,0 +1,14 @@
+extends ~layouts/columns
+
+block title
+    | Tasks
+
+block content
+    +slide_column()
+        .l-column-fit
+            +task('basic')
+                | todo
+
+            +task('optional')
+                | todo
+

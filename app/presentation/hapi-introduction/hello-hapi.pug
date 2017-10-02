@@ -1,0 +1,54 @@
+extends ~layouts/columns
+
+block title
+    | `Hello, World` with Hapi.js
+
+block content
+    +slide_column(60)
+        +code(null, 'javascript')
+            include:escape ./hello-hapi.js
+
+    +slide_column(40).l-column-middle
+        +code_focus('1').current-only
+            :markdown-it
+                Import the `hapi` framework
+
+        +code_focus('3').current-only
+            :markdown-it
+                Create the main applicaiton object - the `server`
+
+
+        +code_focus('5').current-only
+            :markdown-it
+                By default the server is not listening on any port.
+                This is where `connection`s come in.
+
+        +code_focus('5').current-only
+            :markdown-it
+                There can be more than one connection to the server (eg. listen on multiple ports)
+
+        +code_focus('7-13').current-only
+            :markdown-it
+                Register a route with the server.
+                Routes need to be registered after the connections are setup.
+
+        +code_focus('8').current-only
+            :markdown-it
+                Route configuration object contains the `method` field
+                that can be set to any HTTP method or `*` that matches all of them.
+
+        +code_focus('9').current-only
+            :markdown-it
+                `path` field may contain exact paths (`/home`),
+                required params (`/products/{id}`) and optional params (`/files/{name?}`)
+
+
+        +code_focus('10-12').current-only
+            :markdown-it
+                The handler recieves the `request` object that contains all the information relevant to current request (params, headers, etc),
+                and the `reply` interface which allows for sending responses.
+
+        +code_focus('15-17').current-only
+            :markdown-it
+                After the config is done, start the server.
+

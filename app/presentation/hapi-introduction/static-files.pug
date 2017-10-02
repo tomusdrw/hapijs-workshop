@@ -1,0 +1,30 @@
+extends ~layouts/columns
+
+block title
+    | Serving static files
+
+block content
+    +slide_column(60)
+        +code(null, 'javascript')
+            include:escape ./static-files.js
+
+    +slide_column(40).l-column-middle
+        +code_focus('1').current-only
+            :markdown-it
+                Install the `inert` plugin
+
+        +code_focus('10').current-only
+            :markdown-it
+                Plugins must be registered with the application server.
+
+        +code_focus('10-26').current-only
+            :markdown-it
+                Because the registration is asynchronous rest of the config needs to be done in callback.
+
+        +code_focus('16-19').current-only
+            :markdown-it
+                Thanks to `inert`, hapi will recognize a `directory` handler on this route
+
+
+
+

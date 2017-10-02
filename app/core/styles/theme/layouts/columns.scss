@@ -1,0 +1,38 @@
+.dm-slide--columns {
+
+  .dm-slide__content {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+
+    padding-left: 1rem;
+    padding-right: 1rem;
+
+    &__column {
+
+      width: 100%;
+      padding: 0 0.5rem;
+
+      height: 100%;
+      min-height: min-content;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+
+      &:first-child {
+        padding-left: 0;
+      }
+
+      &:last-child {
+        padding-right: 0;
+      }
+
+      &:first-child:last-child {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+    }
+  }
+}
