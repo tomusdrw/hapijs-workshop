@@ -1,0 +1,491 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><link href="bundle_020bed8ceba449b8a8ca38fbb9e1d22b.css" rel="stylesheet"></head><body><div class="reveal"><div class="slides"><section class="dm-slide dm-slide--title-page"><div class="dm-slide__content-wrapper"><h1 class="dm-slide-title">Hapi.js for Node developers</h1></div></section><section class="dm-slide dm-slide--title-page"><div class="dm-slide__content-wrapper"><h1 class="dm-slide-title">First server in Hapi</h1></div></section><section class="dm-slide dm-slide--columns"><div class="dm-slide__content-wrapper"><h3 class="dm-slide__title">`Hello, World` with Hapi.js</h3><div class="dm-slide__content"><div class="dm-slide__content__column" style="min-width:60%;flex-basis:60%;"><pre class="dm-code dm-code--view"><code class="dm-code__editor hljs javascript">const hapi = require(&#39;hapi&#39;);
+
+const server = new hapi.Server();
+
+server.connection({ port: 3000, host: &#39;localhost&#39; });
+
+server.route({
+    method: &#39;GET&#39;,
+    path: &#39;/&#39;,
+    handler: function (request, reply) {
+        return reply(&#39;Hapi to see you!\n&#39;);
+    }
+});
+
+server.start(() =&gt; {
+    console.log(`Server running at ${server.info.uri}`);
+});
+</code></pre></div><div class="dm-slide__content__column l-column-middle" style="min-width:40%;flex-basis:40%;"><div class="current-only fragment dm-code-focus" data-code-focus="1"><p>Import the <code>hapi</code> framework</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="3"><p>Create the main applicaiton object - the <code>server</code></p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="5"><p>By default the server is not listening on any port.
+This is where <code>connection</code>s come in.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="5"><p>There can be more than one connection to the server (eg. listen on multiple ports)</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="7-13"><p>Register a route with the server.
+Routes need to be registered after the connections are setup.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="8"><p>Route configuration object contains the <code>method</code> field
+that can be set to any HTTP method or <code>*</code> that matches all of them.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="9"><p><code>path</code> field may contain exact paths (<code>/home</code>),
+required params (<code>/products/{id}</code>) and optional params (<code>/files/{name?}</code>)</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="10-12"><p>The handler recieves the <code>request</code> object that contains all the information relevant to current request (params, headers, etc),
+and the <code>reply</code> interface which allows for sending responses.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="15-17"><p>After the config is done, start the server.</p>
+</div></div></div></div></section><section class="dm-slide dm-slide--columns"><div class="dm-slide__content-wrapper"><h3 class="dm-slide__title">Serving static files</h3><div class="dm-slide__content"><div class="dm-slide__content__column" style="min-width:60%;flex-basis:60%;"><pre class="dm-code dm-code--view"><code class="dm-code__editor hljs javascript">// npm install inert --save
+
+const path = require(&#39;path&#39;);
+const hapi = require(&#39;hapi&#39;);
+const inert = require(&#39;inert&#39;);
+
+const server = new hapi.Server();
+server.connection({ port: 3000, host: &#39;localhost&#39; });
+
+server.register(inert, (err) =&gt; {
+
+    server.route({
+        method: &#39;GET&#39;,
+        path: &#39;/{param*}&#39;,
+        handler: {
+            directory: {
+                path: path.join(__dirname, &#39;public&#39;),
+                listing: true
+            }
+        }
+    });
+
+    server.start((err) =&gt; {
+        console.log(`Server running at: ${server.info.uri}`);
+    });
+});
+</code></pre></div><div class="dm-slide__content__column l-column-middle" style="min-width:40%;flex-basis:40%;"><div class="current-only fragment dm-code-focus" data-code-focus="1"><p>Install the <code>inert</code> plugin</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="10"><p>Plugins must be registered with the application server.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="10-26"><p>Because the registration is asynchronous rest of the config needs to be done in callback.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="16-19"><p>Thanks to <code>inert</code>, hapi will recognize a <code>directory</code> handler on this route</p>
+</div></div></div></div></section><section class="dm-slide dm-slide--columns"><div class="dm-slide__content-wrapper"><h3 class="dm-slide__title">Handling templates</h3><div class="dm-slide__content"><div class="dm-slide__content__column" style="min-width:60%;flex-basis:60%;"><pre class="dm-code dm-code--view"><code class="dm-code__editor hljs javascript">// npm install vision ejs --save
+
+/** INDEX.JS **/
+
+const hapi = require(&#39;hapi&#39;);
+const vision = require(&#39;vision&#39;);
+const ejs = require(&#39;ejs&#39;);
+
+const server = new hapi.Server();
+server.connection({ port: 3000, host: &#39;localhost&#39; });
+
+server.register(vision, () =&gt; {
+
+    server.views({
+        engines: { ejs },
+        relativeTo: __dirname,
+        path: &#39;views&#39;
+    });
+
+    server.route({
+        method: &#39;GET&#39;,
+        path: &#39;/&#39;,
+        handler: function (request, reply) {
+            return reply.view(&#39;index&#39;, { message: &#39;Hapi to see you!&#39; });
+        }
+    });
+
+    server.start(() =&gt; {
+        console.log(`Server running at: ${server.info.uri}`);
+    });
+});
+
+
+/** VIEWS/INDEX.EJS **/
+&lt;h1&gt;&lt;%= message %&gt;&lt;/h1&gt;
+</code></pre></div><div class="dm-slide__content__column l-column-middle" style="min-width:40%;flex-basis:40%;"><div class="current-only fragment dm-code-focus" data-code-focus="1"><p>Install the <code>vision</code> plugin and <code>ejs</code> templates package</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="12"><p>Register <code>vision</code> with the server</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="14-18"><p><code>vision</code> extends the server object with <code>views</code> method used to provide configuration for views.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="15"><p>Provide the templating engine. <code>vision</code> supports multiple out-of-the-box and allows custom handlers.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="24"><p>On top of that, the <code>reply</code> interface was exetened with the <code>view</code> method.
+It takes the template name and an object with data for the template as arguments.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="34-35"><p>The <code>views/index.ejs</code> contains the tempalte.
+All fields from the object provided to the template are available.</p>
+</div></div></div></div></section><section class="dm-slide dm-slide--columns"><div class="dm-slide__content-wrapper"><h3 class="dm-slide__title">Tasks</h3><div class="dm-slide__content"><div class="dm-slide__content__column" style="min-width:undefined%;flex-basis:undefined%;"><div class="l-column-fit"><article class="dm-task dm-task--basic undefined"><div class="dm-task__difficulty"></div><div class="dm-task__body">Create a Hapi.js server that serves static files</div></article><article class="dm-task dm-task--basic undefined"><div class="dm-task__difficulty"></div><div class="dm-task__body">Add `GET /api/products` endpoint that returns a list of products.
+Keep the products in a separate JSON file.</div></article><article class="dm-task dm-task--optional undefined"><div class="dm-task__difficulty"></div><div class="dm-task__body">Generate the `index.html` file using `vision` (and templating engine of your choice)</div></article><article class="dm-task dm-task--optional undefined"><div class="dm-task__difficulty"></div><div class="dm-task__body">Generate the `index.html` file using `vision` (and templating engine of your choice)</div></article><article class="dm-task dm-task--optional undefined"><div class="dm-task__difficulty"></div><div class="dm-task__body">Create an in-memory `Products` database. It should be able to list, add, and remove products.</div></article></div></div></div></div></section><section class="dm-slide dm-slide--title-page"><div class="dm-slide__content-wrapper"><h1 class="dm-slide-title">REST API & Tests<small class="dm-slide__title__subtitle">Defining REST endpoints and writing tests.</small></h1></div></section><section class="dm-slide dm-slide--columns"><div class="dm-slide__content-wrapper"><h3 class="dm-slide__title">Logging the routing table with Blipp</h3><div class="dm-slide__content"><div class="dm-slide__content__column" style="min-width:60%;flex-basis:60%;"><pre class="dm-code dm-code--view"><code class="dm-code__editor hljs javascript">// npm install --save blipp
+const blipp = require(&#39;app/presentation/module02/blipp&#39;);
+
+server.route([
+    {
+        method: &#39;GET&#39;,
+        path: &#39;/&#39;,
+        config: {
+            description: &#39;The homepage&#39;,
+            /* ... */
+        }
+    },
+    { /* ... */ }
+]);
+
+server.register(blipp, () =&gt; {
+   server.start(/*...*/)
+});
+</code></pre></div><div class="dm-slide__content__column l-column-middle" style="min-width:40%;flex-basis:40%;"><div class="current-only fragment dm-code-focus" data-code-focus="1-2"><p>Install and import the <code>blipp</code> plugin</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="4-14"><p>Configure application routes as normal</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="9"><p>Route's config contains the <code>description</code> property: it will be usefull with logging and documentation generation.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="16-18"><p>Register the plugin and run the server</p>
+</div></div></div></div></section><section class="dm-slide dm-slide--columns"><div class="dm-slide__content-wrapper"><h3 class="dm-slide__title">Logging with `good`</h3><div class="dm-slide__content"><div class="dm-slide__content__column" style="min-width:60%;flex-basis:60%;"><pre class="dm-code dm-code--view"><code class="dm-code__editor hljs javascript">// npm install --save good good-console good-squeeze
+
+const good = require(&#39;app/presentation/module02/good&#39;);
+
+server.route([
+    {
+        path: &#39;/&#39;,
+        method: &#39;GET&#39;,
+        handler(request, reply) {
+            return reply({ message: &#39;Hapi to see you!&#39; });
+        }
+    },
+    {
+        path: &#39;/error&#39;,
+        method: &#39;GET&#39;,
+        handler() {
+            throw new Error();
+        }
+    }
+]);
+
+const goodOptions = {
+    reporters: {
+        consoleLogger: [
+            {
+                module: &#39;good-squeeze&#39;,
+                name: &#39;Squeeze&#39;,
+                args: [{
+                    log: &#39;*&#39;,
+                    response: &#39;*&#39;,
+                    ops: &#39;*&#39;,
+                    error: &#39;*&#39;
+                }]
+            },
+            {
+                module: &#39;good-console&#39;
+            },
+            &#39;stdout&#39;
+        ]
+    }
+};
+
+server.register({ register: good, options: goodOptions }, () =&gt; {
+    server.start(() =&gt; { /* .. */ });
+});
+</code></pre></div><div class="dm-slide__content__column l-column-middle" style="min-width:40%;flex-basis:40%;"><div class="current-only fragment dm-code-focus" data-code-focus="1-3"><p>Install the <code>good</code> plugin and <code>good-console</code> reporter.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="5-20"><p>Register routes</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="22-41"><p>Configuration object for the <code>good</code> plugin.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="24-40"><p>Configure a new logger object. The configuration is an array of streams to pipie the logs through.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="25-34"><p><code>good-squeeze</code> is a utility that helps to filter stream events.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="28-33"><p>This reporter will log out all <code>log</code>, <code>response</code>, <code>ops</code> and <code>error</code> events fired by the server.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="35-37"><p>Next, format the logs with <code>good-console</code>.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="38"><p>Finally, pass the logs to the <code>stdout</code> stream (the actual console).</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="43"><p>Register the plugin passing in the configuration object.</p>
+</div></div></div></div></section><section class="dm-slide dm-slide--columns"><div class="dm-slide__content-wrapper"><h3 class="dm-slide__title">Basic tests in Hapi ecosystem</h3><div class="dm-slide__content"><div class="dm-slide__content__column" style="min-width:60%;flex-basis:60%;"><pre class="dm-code dm-code--view"><code class="dm-code__editor hljs javascript">// npm install lab --save-dev
+
+
+/* TEST/INDEX.JS */
+
+const { expect, test, experiment } =
+    exports.lab =
+    require(&#39;lab&#39;).script();
+
+experiment(&#39;Hapi to&#39;, () =&gt; {
+    test(&#39;be sane&#39;, (done) =&gt; {
+        expect(true).to.be.true();
+        done();
+    });
+});
+</code></pre></div><div class="dm-slide__content__column l-column-middle" style="min-width:40%;flex-basis:40%;"><div class="current-only fragment dm-code-focus" data-code-focus="1"><p>Install the <code>lab</code> testing utility.
+It's based on <code>mocha</code> and shares most of the API.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="8"><p>Import the package and register a testing script with <code>script</code> method.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="7"><p>The script has to be exported as <code>lab</code>.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="6"><p>Get the tools for testing.
+Mapping to <code>mocha/jasmine</code>: <code>experiment</code> is the same as <code>describe</code> and <code>test</code> corresponds to <code>it</code>.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="12"><p>Change in relation to <code>mocha</code>:
+assertions are functions (<code>true()</code> instead of <code>true</code>). Easy to miss!</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="13"><p>All <code>lab</code> tests are asynchronous by default. Either call <code>done()</code> or return a promise from the test.</p>
+</div></div></div></div></section><section class="dm-slide dm-slide--columns"><div class="dm-slide__content-wrapper"><h3 class="dm-slide__title">Testing requests</h3><div class="dm-slide__content"><div class="dm-slide__content__column" style="min-width:60%;flex-basis:60%;"><pre class="dm-code dm-code--view"><code class="dm-code__editor hljs javascript">/* LIB/SERVER.JS */
+server.route({
+    method: &#39;GET&#39;,
+    path: &#39;/&#39;,
+    handler: function (request, reply) {
+        return reply(&#39;Hapi to see you!\n&#39;);
+    }
+});
+
+module.exports = server;
+
+/* TESTS/LIB/SERVER.JS */
+
+const server = require(&#39;../lib/server&#39;);
+const { expect, test, experiment } = exports.lab = require(&#39;lab&#39;).script();
+
+experiment(&#39;Route: /&#39;, () =&gt; {
+    test(&#39;responds with 200&#39;, (done) =&gt; {
+        server.inject({ method: &#39;GET&#39;, path: &#39;/&#39; }, (res) =&gt; {
+            expect(res.statusCode).to.equal(200);
+            done();
+        });
+    });
+});
+</code></pre></div><div class="dm-slide__content__column l-column-middle" style="min-width:40%;flex-basis:40%;"><div class="current-only fragment dm-code-focus" data-code-focus="1-8"><p>Basic server definition wtih a route.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="10"><p>The server is exported to use it elswhere.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="19"><p>The <code>server</code> object is decorated with <code>inject</code> method thanks to the <code>shot</code> utility.
+The method enables faking server requests.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="19-22"><p><code>.inject</code> takes an object with options and a callback that will be called with a <code>response</code> object.</p>
+</div></div></div></div></section><section class="dm-slide dm-slide--columns"><div class="dm-slide__content-wrapper"><h3 class="dm-slide__title">Tasks</h3><div class="dm-slide__content"><div class="dm-slide__content__column" style="min-width:undefined%;flex-basis:undefined%;"><div class="l-column-fit"><article class="dm-task dm-task--basic undefined"><div class="dm-task__difficulty"></div><div class="dm-task__body">Log all requests with `good`</div></article><article class="dm-task dm-task--basic undefined"><div class="dm-task__difficulty"></div><div class="dm-task__body">Add `POST /api/products` route. Validate the payload and use `boom` for errors.</div></article><article class="dm-task dm-task--optional undefined"><div class="dm-task__difficulty"></div><div class="dm-task__body">Add `DELETE /api/products/{id}` route.</div></article><article class="dm-task dm-task--optional undefined"><div class="dm-task__difficulty"></div><div class="dm-task__body">Test `GET /` and `POST /api/products` endpoints</div></article><article class="dm-task dm-task--optional undefined"><div class="dm-task__difficulty"></div><div class="dm-task__body">Create a new product form</div></article><article class="dm-task dm-task--optional undefined"><div class="dm-task__difficulty"></div><div class="dm-task__body">Get 100% test coverage (`lab -c`)</div></article></div></div></div></div></section><section class="dm-slide dm-slide--title-page"><div class="dm-slide__content-wrapper"><h1 class="dm-slide-title">Validation<small class="dm-slide__title__subtitle">Using the joi package to validate requests and responses</small></h1></div></section><section class="dm-slide dm-slide--columns"><div class="dm-slide__content-wrapper"><h3 class="dm-slide__title">Validation schemas</h3><div class="dm-slide__content"><div class="dm-slide__content__column" style="min-width:60%;flex-basis:60%;"><pre class="dm-code dm-code--view"><code class="dm-code__editor hljs javascript">// npm install joi --save
+
+const passwordSchema = joi.string()
+    .min(8)
+    .max(30);
+
+joi.validate(&#39;password123&#39;, passwordSchema);
+// { error: null, value: &#39;password123&#39; }
+
+joi.validate(&#39;hello&#39;, passwordSchema);
+// { error: {...}, value: &#39;hello&#39; }
+
+</code></pre></div><div class="dm-slide__content__column l-column-middle" style="min-width:40%;flex-basis:40%;"><div class="current-only fragment dm-code-focus" data-code-focus="1"><p>Install and import the <code>joi</code> library</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="3-5"><p>Create a validation schema</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="3"><p>The password must be a <code>string</code>...</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="4-5"><p>...between 8 and 30 characters long.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="7-8"><p>The <code>validate</code> method takes the value to validate and the schema to validate against.
+It returns and object/promise-like that contains <code>error</code> and <code>value</code> properties.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="10-11"><p>If there were any errors, their details will be shown in the <code>error</code> property.</p>
+</div></div></div></div></section><section class="dm-slide dm-slide--columns"><div class="dm-slide__content-wrapper"><h3 class="dm-slide__title">Validating requests</h3><div class="dm-slide__content"><div class="dm-slide__content__column" style="min-width:60%;flex-basis:60%;"><pre class="dm-code dm-code--view"><code class="dm-code__editor hljs javascript">const idSchema = joi.string().token();
+const productSchema = joi.object().keys({
+    id: idSchema,
+    price: joi.number().min(1)
+});
+
+server.route({
+    method: &#39;PUT&#39;,
+    path: &#39;/products/{id}&#39;,
+    config: {
+        validate: {
+            headers: true,
+            params: {
+                id: idSchema.required()
+            },
+            query: false,
+            payload: productSchema
+        },
+        handler: function (request, reply) {
+            // ...
+        },
+        response: {
+            schema: productSchema,
+            failAction: &#39;error&#39;,
+            sample: 100
+        }
+    }
+});
+
+</code></pre></div><div class="dm-slide__content__column l-column-middle" style="min-width:40%;flex-basis:40%;"><div class="current-only fragment dm-code-focus" data-code-focus="1-5"><p>Define required schemas</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="11-18"><p>Provide validation config</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="12"><p><code>true</code> means that any value is allowed. In this case: all headers are OK.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="13-15"><p>Specifies validation per route param</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="16"><p><code>false</code> - no values allowed. This request must not have any query params.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="17"><p>Payload of this request must match the <code>productSchema</code>.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="22-26"><p>API responses can be validated too.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="23"><p>Validate the response against the <code>productSchema</code></p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="24"><p>If the validation fails return the <code>500 Internal Server Error</code> response.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="25"><p>Percent of requests to validate. 100% is perfect for development.</p>
+</div></div></div></div></section><section class="dm-slide dm-slide--columns"><div class="dm-slide__content-wrapper"><h3 class="dm-slide__title">Tasks</h3><div class="dm-slide__content"><div class="dm-slide__content__column" style="min-width:undefined%;flex-basis:undefined%;"><div class="l-column-fit"><article class="dm-task dm-task--basic undefined"><div class="dm-task__difficulty"></div><div class="dm-task__body">Add `joi` validation for the `POST /api/prodcuts/` route.</div></article><article class="dm-task dm-task--basic undefined"><div class="dm-task__difficulty"></div><div class="dm-task__body">Add `DELETE /api/products/{id}` route and validate the param.</div></article><article class="dm-task dm-task--optional undefined"><div class="dm-task__difficulty"></div><div class="dm-task__body">Reuse the `product` validation schema to validate the response to `GET /api/products`</div></article><article class="dm-task dm-task--optional undefined"><div class="dm-task__difficulty"></div><div class="dm-task__body">Get 100% test coverage (`lab -c`)</div></article><article class="dm-task dm-task--optional undefined"><div class="dm-task__difficulty"></div><div class="dm-task__body">Use either `loki` or `lowdb` and replace the in-memory database.</div></article></div></div></div></div></section><section class="dm-slide dm-slide--title-page"><div class="dm-slide__content-wrapper"><h1 class="dm-slide-title">Server composition<small class="dm-slide__title__subtitle">Structuring the application</small></h1></div></section><section class="dm-slide dm-slide--columns"><div class="dm-slide__content-wrapper"><h3 class="dm-slide__title">Server configuration via manifest</h3><div class="dm-slide__content"><div class="dm-slide__content__column" style="min-width:60%;flex-basis:60%;"><pre class="dm-code dm-code--view"><code class="dm-code__editor hljs javascript">/* /MANIFEST.JSS */
+module.exports = {
+    &quot;connections&quot;: [
+        {
+            &quot;port&quot;: 3000,
+            &quot;host&quot;: &quot;localhost&quot;
+        }
+    ],
+    &quot;registrations&quot;: [
+        {
+            &quot;plugin&quot;: &quot;inert&quot;
+        },
+        {
+            &quot;plugin&quot;: &quot;vision&quot;
+        }
+    ]
+};
+
+/* /LIB/SERVER.JS */
+const glue = require(&#39;glue&#39;);
+const manifest = require(&#39;../manifest&#39;);
+
+module.exports = glue.compose(manifest);
+
+/* /INDEX.JS */
+const Server = require(&#39;./lib/server&#39;);
+
+Server.then((server) =&gt; {
+    server.route(/* ... */);
+
+    server.start().then(() =&gt; {
+        console.log(`Server running at ${server.info.uri}`);
+    });
+});
+</code></pre></div><div class="dm-slide__content__column l-column-middle" style="min-width:40%;flex-basis:40%;"><div class="current-only fragment dm-code-focus" data-code-focus="1-16"><p><code>manifest.js</code> or (<code>manifest.json</code>) file in the main directory</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="3-7"><p>Manifest contains the server connection configuration options
+that would normally be passed to <code>server.connection([options])</code>.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="9-16"><p>It also contains all the plugins along with their options.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="19-23"><p>Instead of creating the server manually,
+use the <code>glue</code> library to generate the server based on the manifest file.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="26"><p>Import the exported <code>Server</code> definition.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="25-34"><p><code>glue.compose</code> (as well as most <code>hapi</code> methods) returns a promise.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="29-33"><p>Once the server is ready, register routes as per usuall and start the server.</p>
+</div></div></div></div></section><section class="dm-slide dm-slide--columns"><div class="dm-slide__content-wrapper"><h3 class="dm-slide__title">Structuring the app with plugins</h3><div class="dm-slide__content"><div class="dm-slide__content__column" style="min-width:60%;flex-basis:60%;"><pre class="dm-code dm-code--view"><code class="dm-code__editor hljs javascript">/* /LIB/PRODUCTS.jS */
+exports.register = (server, options, next) =&gt; {
+    server.route({
+        method: &#39;GET&#39;,
+        path: &#39;/&#39;,
+        description: &#39;Index route&#39;,
+        /* ... */
+    });
+
+    server.route({
+        method: &#39;GET&#39;,
+        path: &#39;/{id}&#39;,
+        description: &#39;Fetch route&#39;,
+        /* ... */
+    });
+
+    /* ... */
+    next();
+};
+
+exports.register.attributes = {
+    name: &#39;Product routes&#39;
+};
+
+/* /MANIFEST.JS */
+module.exports = {
+    &quot;connections&quot;: [/* ... */],
+    &quot;registrations&quot;: [
+        /* ... */,
+        {
+            &quot;plugin&quot;: &quot;./lib/products&quot;,
+            &quot;options&quot;: {
+                &quot;routes&quot;: {
+                    &quot;prefix&quot;: &quot;/products&quot;
+                }
+            }
+        }
+    ]
+};
+
+/* /LIB/SERVER.JS */
+const glue = require(&#39;glue&#39;);
+const manifest = require(&#39;../manifest&#39;);
+
+const options = { relativeTo: __dirname };
+
+module.exports = glue.compose(manifest, options);
+</code></pre></div><div class="dm-slide__content__column l-column-middle" style="min-width:40%;flex-basis:40%;"><div class="current-only fragment dm-code-focus" data-code-focus="1-19"><p>Common way to split a Hapi app into smaller pieces is providing those pieces as plugins.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="2"><p>A plugin is essentialy just an object with the <code>register</code> method that extends the <code>server</code> object when called.
+The consumer of the plugin can also provide <code>options</code> that contain additional configuration.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="3-17"><p>When the <code>register</code> method is called define routing for the <code>products</code> resource.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="18"><p>After the setup is done, call <code>next()</code> to return control back to the framework.
+In this case the registraton is synchronous, but it's possible to register plugins asynchronously.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="21-23"><p>The <code>register</code> method should have an <code>attributes</code> property that contains plugin metadata.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="30-37"><p>Add the plugin to the server configuration manifest.
+The <code>plugin</code> property contains the path to the plugin module.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="32-35"><p>While registering the plugin that contains routes it's useful to provide the prefix.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="41-47"><p>Because the plugin is registered in a project directory it's required to add the <code>relativeTo</code> option.</p>
+</div></div></div></div></section><section class="dm-slide dm-slide--columns"><div class="dm-slide__content-wrapper"><h3 class="dm-slide__title">Tasks</h3><div class="dm-slide__content"><div class="dm-slide__content__column" style="min-width:undefined%;flex-basis:undefined%;"><div class="l-column-fit"><article class="dm-task dm-task--basic undefined"><div class="dm-task__difficulty"></div><div class="dm-task__body">Split the application into plugins</div></article><article class="dm-task dm-task--basic undefined"><div class="dm-task__difficulty"></div><div class="dm-task__body">Move the `/api/products` prefix to plugin configuration</div></article><article class="dm-task dm-task--optional undefined"><div class="dm-task__difficulty"></div><div class="dm-task__body">Write single plugin tests</div></article><article class="dm-task dm-task--optional undefined"><div class="dm-task__difficulty"></div><div class="dm-task__body">Create separate `package.json` files for each plugin</div></article></div></div></div></div></section><section class="dm-slide dm-slide--title-page"><div class="dm-slide__content-wrapper"><h1 class="dm-slide-title">Documentation, Security and Caching<small class="dm-slide__title__subtitle">Generate beautiful docs with no effort.</small></h1></div></section><section class="dm-slide dm-slide--columns"><div class="dm-slide__content-wrapper"><h3 class="dm-slide__title">Automatic docs with lout/hapi-swagger</h3><div class="dm-slide__content"><div class="dm-slide__content__column" style="min-width:60%;flex-basis:60%;"><pre class="dm-code dm-code--view"><code class="dm-code__editor hljs javascript">// npm install --save lout
+const lout = require(&#39;lout&#39;);
+server.register({ register: lout }, () =&gt; {
+    server.start(() =&gt; { /* .. */ });
+});
+
+// OR npm install --save hapi-swagger
+const hapiSwagger = require(&#39;lout&#39;);
+server.register({ register: hapiSwagger }, () =&gt; {
+    server.start(() =&gt; { /* .. */ });
+});
+
+
+// ROUTE CONFIG
+server.route({
+    method: &#39;GET&#39;,
+    path: &#39;/products/{id}/&#39;,
+    config: {
+        handler() { /* */},
+        description: &#39;Get a product&#39;,
+        notes: &#39;Returns a product by the id passed in the path&#39;,
+        tags: [&#39;api&#39;],
+        validate: {
+            params: {
+                id : Joi.string()
+                    .token()
+                    .required()
+                    .description(&#39;The id for the product. Can only contain a-z, A-Z, 0-9, and underscore&#39;)
+            }
+        }
+    }
+})
+</code></pre></div><div class="dm-slide__content__column l-column-middle" style="min-width:40%;flex-basis:40%;"><div class="current-only fragment dm-code-focus" data-code-focus="1-11"><p>Standard installation and registration.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="4-32"><p>Documentation plugins heavily leverage route and validation properties like <code>description</code>, <code>notes</code> and <code>tags</code>.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="1-32"><p>Open <code>/docs</code> (with <code>lout</code>) or <code>/documentation</code> (<code>hapi-swagger</code>)</p>
+</div></div></div></div></section><section class="dm-slide dm-slide--columns"><div class="dm-slide__content-wrapper"><h3 class="dm-slide__title">Tasks</h3><div class="dm-slide__content"><div class="dm-slide__content__column" style="min-width:undefined%;flex-basis:undefined%;"><div class="l-column-fit"><article class="dm-task dm-task--basic undefined"><div class="dm-task__difficulty"></div><div class="dm-task__body">Generate docs using `lout` or `hapi-swagger`.
+Each route should have validation, tags, and descriptions.</div></article><article class="dm-task dm-task--basic undefined"><div class="dm-task__difficulty"></div><div class="dm-task__body">Add `blankie` and define strict Content Security Policy</div></article><article class="dm-task dm-task--optional undefined"><div class="dm-task__difficulty"></div><div class="dm-task__body">Add a server method and matching route. Use caching.</div></article></div></div></div></div></section><section class="dm-slide dm-slide--title-page"><div class="dm-slide__content-wrapper"><h1 class="dm-slide-title">Authentication</h1></div></section><section class="dm-slide dm-slide--columns"><div class="dm-slide__content-wrapper"><h3 class="dm-slide__title">Authentication with Hapi</h3><div class="dm-slide__content"><div class="dm-slide__content__column" style="min-width:60%;flex-basis:60%;"><pre class="dm-code dm-code--view"><code class="dm-code__editor hljs javascript">/* /LIB/AUTHENTICATION.JS */
+exports.register = (server, options, next) =&gt; {
+
+    server.auth.strategy(
+        &#39;simple-authentication&#39;,
+        &#39;basic&#39;,
+        false,
+        {
+            validateFunc(request, username, password, cb) {
+                /* ... */
+                cb(null, isAuthenticated, userCredentials)
+            }
+        }
+    );
+
+    next();
+};
+
+export.register.attributes = {
+    name: &#39;auth&#39;,
+    dependencies: &#39;hapi-auth-basic&#39;
+};
+
+/* MANIFEST */
+&quot;registrations&quot;: [
+    {
+        &quot;plugin&quot;: &quot;hapi-auth-basic&quot;
+    },
+    {
+        &quot;plugin&quot;: &quot;./lib/authentication&quot;
+    },
+    /* ... */
+]
+
+/* ROUTE CONFIG */
+server.route({
+    method: &#39;GET&#39;,
+    path: &#39;/&#39;,
+    auth: &#39;simple-authentication&#39;,
+    handler(request, response) {
+        /* ... */
+    }
+});
+</code></pre></div><div class="dm-slide__content__column l-column-middle" style="min-width:40%;flex-basis:40%;"><div class="current-only fragment dm-code-focus" data-code-focus="1-17"><p>Authentication in HapiJS is build around the concepts of  authentication <code>scheme</code> and <code>strategy</code>.
+A <code>scheme</code> is a Hapi plugin that defines the internals of authentication (ie. basic, digest, oauth, etc).</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="1-17"><p>A <code>strategy</code> is an instance of the scheme configured to work with our app.
+There could be multiple strategies (configurations) for the same schema.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="1-17"><p>The strategy for the app is defined as a plugin.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="4"><p>Strategies are registered using the <code>auth.strategy</code> method that takes up to 4 arguments.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="5"><p>First is the strategy's name: a server-wide unique identifier for this strategy.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="6"><p>Next, the <code>schema</code> name. Also unique, provided by the schema plugin.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="7"><p>Authentication <code>mode</code> defines the default behaviour:
+<code>false</code> means routes are not authenticated using this strategy by default.
+Other possible values: <code>true</code>, <code>'required'</code>, <code>'optional'</code>, <code>'try'</code>.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="8-13"><p>The configuration object.
+Details depend on the <code>schema</code>,
+usually requires custom validation function.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="21"><p>If the plugin depends on some other plugins,
+it's possible to define that in the <code>attributes</code> object.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="24-33"><p>Register the <code>auth</code> plugin along with it's dependency.</p>
+</div><div class="current-only fragment dm-code-focus" data-code-focus="39"><p>The <code>auth</code> property allows to specify which strategy to use for this route.</p>
+</div></div></div></div></section><section class="dm-slide dm-slide--columns"><div class="dm-slide__content-wrapper"><h3 class="dm-slide__title">Tasks</h3><div class="dm-slide__content"><div class="dm-slide__content__column" style="min-width:undefined%;flex-basis:undefined%;"><div class="l-column-fit"><article class="dm-task dm-task--basic undefined"><div class="dm-task__difficulty"></div><div class="dm-task__body">Add authentication with `hapi-auth-jwt2`</div></article></div></div></div></div></section></div></div><script type="text/javascript" src="vendor.bundle_2b4041c0be029dbfc0d8.js"></script><script type="text/javascript" src="bundle_2b4041c0be029dbfc0d8.js"></script></body></html>
