@@ -1,0 +1,61 @@
+extends ~layouts/columns
+
+block title
+    | Authentication with Hapi
+
+block content
+    +slide_column(60)
+        +code(null, 'javascript')
+            include:escape ./schemes-strategies.js
+
+    +slide_column(40).l-column-middle
+        +code_focus('1-17').current-only
+            :markdown-it
+                Authentication in HapiJS is build around the concepts of  authentication `scheme` and `strategy`.
+                A `scheme` is a Hapi plugin that defines the internals of authentication (ie. basic, digest, oauth, etc).
+
+        +code_focus('1-17').current-only
+            :markdown-it
+                A `strategy` is an instance of the scheme configured to work with our app.
+                There could be multiple strategies (configurations) for the same schema.
+
+        +code_focus('1-17').current-only
+            :markdown-it
+                The strategy for the app is defined as a plugin.
+
+        +code_focus('4').current-only
+            :markdown-it
+                Strategies are registered using the `auth.strategy` method that takes up to 4 arguments.
+
+        +code_focus('5').current-only
+            :markdown-it
+                First is the strategy's name: a server-wide unique identifier for this strategy.
+
+        +code_focus('6').current-only
+            :markdown-it
+                Next, the `schema` name. Also unique, provided by the schema plugin.
+
+        +code_focus('7').current-only
+            :markdown-it
+                Authentication `mode` defines the default behaviour:
+                `false` means routes are not authenticated using this strategy by default.
+                Other possible values: `true`, `'required'`, `'optional'`, `'try'`.
+
+        +code_focus('8-13').current-only
+            :markdown-it
+                The configuration object.
+                Details depend on the `schema`,
+                usually requires custom validation function.
+
+        +code_focus('21').current-only
+            :markdown-it
+                If the plugin depends on some other plugins,
+                it's possible to define that in the `attributes` object.
+
+        +code_focus('24-33').current-only
+            :markdown-it
+                Register the `auth` plugin along with it's dependency.
+
+        +code_focus('39').current-only
+            :markdown-it
+                The `auth` property allows to specify which strategy to use for this route.

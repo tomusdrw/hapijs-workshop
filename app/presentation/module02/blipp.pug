@@ -1,0 +1,29 @@
+extends ~layouts/columns
+
+block title
+    | Logging the routing table with Blipp
+
+block content
+    +slide_column(60)
+        +code(null, 'javascript')
+            include:escape blipp.js
+
+    +slide_column(40).l-column-middle
+        +code_focus('1-2').current-only
+            :markdown-it
+                Install and import the `blipp` plugin
+
+        +code_focus('4-14').current-only
+            :markdown-it
+                Configure application routes as normal
+
+        +code_focus('9').current-only
+            :markdown-it
+                Route's config contains the `description` property: it will be usefull with logging and documentation generation.
+
+        +code_focus('16-18').current-only
+            :markdown-it
+                Register the plugin and run the server
+
+
+

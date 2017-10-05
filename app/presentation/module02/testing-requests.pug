@@ -1,0 +1,30 @@
+extends ~layouts/columns
+
+block title
+    | Testing requests
+
+block content
+    +slide_column(60)
+        +code(null, 'javascript')
+            include:escape ./testing-requests.js
+
+    +slide_column(40).l-column-middle
+        +code_focus('1-8').current-only
+            :markdown-it
+                Basic server definition wtih a route.
+
+        +code_focus('10').current-only
+            :markdown-it
+                The server is exported to use it elswhere.
+
+        +code_focus('19').current-only
+            :markdown-it
+                The `server` object is decorated with `inject` method thanks to the `shot` utility.
+                The method enables faking server requests.
+
+        +code_focus('19-22').current-only
+            :markdown-it
+                `.inject` takes an object with options and a callback that will be called with a `response` object.
+
+
+

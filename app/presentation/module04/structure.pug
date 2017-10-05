@@ -1,0 +1,47 @@
+extends ~layouts/columns
+
+block title
+    | Structuring the app with plugins
+
+block content
+    +slide_column(60)
+        +code(null, 'javascript')
+            include:escape ./custom-plugin.js
+
+    +slide_column(40).l-column-middle
+        +code_focus('1-19').current-only
+            :markdown-it
+                Common way to split a Hapi app into smaller pieces is providing those pieces as plugins.
+
+        +code_focus('2').current-only
+            :markdown-it
+                A plugin is essentialy just an object with the `register` method that extends the `server` object when called.
+                The consumer of the plugin can also provide `options` that contain additional configuration.
+
+
+        +code_focus('3-17').current-only
+            :markdown-it
+                When the `register` method is called define routing for the `products` resource.
+
+        +code_focus('18').current-only
+            :markdown-it
+                After the setup is done, call `next()` to return control back to the framework.
+                In this case the registraton is synchronous, but it's possible to register plugins asynchronously.
+
+        +code_focus('21-23').current-only
+            :markdown-it
+                The `register` method should have an `attributes` property that contains plugin metadata.
+
+        +code_focus('30-37').current-only
+            :markdown-it
+                Add the plugin to the server configuration manifest.
+                The `plugin` property contains the path to the plugin module.
+
+        +code_focus('32-35').current-only
+            :markdown-it
+                While registering the plugin that contains routes it's useful to provide the prefix.
+
+
+        +code_focus('41-47').current-only
+            :markdown-it
+                Because the plugin is registered in a project directory it's required to add the `relativeTo` option.

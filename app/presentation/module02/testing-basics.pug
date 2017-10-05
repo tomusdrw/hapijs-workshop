@@ -1,0 +1,40 @@
+extends ~layouts/columns
+
+block title
+    | Basic tests in Hapi ecosystem
+
+block content
+    +slide_column(60)
+        +code(null, 'javascript')
+            include:escape ./testing-basics.js
+
+    +slide_column(40).l-column-middle
+        +code_focus('1').current-only
+            :markdown-it
+                Install the `lab` testing utility.
+                It's based on `mocha` and shares most of the API.
+
+        +code_focus('8').current-only
+            :markdown-it
+                Import the package and register a testing script with `script` method.
+
+        +code_focus('7').current-only
+            :markdown-it
+                The script has to be exported as `lab`.
+
+        +code_focus('6').current-only
+            :markdown-it
+                Get the tools for testing.
+                Mapping to `mocha/jasmine`: `experiment` is the same as `describe` and `test` corresponds to `it`.
+
+        +code_focus('12').current-only
+            :markdown-it
+                Change in relation to `mocha`:
+                assertions are functions (`true()` instead of `true`). Easy to miss!
+
+        +code_focus('13').current-only
+            :markdown-it
+                All `lab` tests are asynchronous by default. Either call `done()` or return a promise from the test.
+
+
+

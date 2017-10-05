@@ -1,0 +1,19 @@
+extends ~layouts/columns
+
+block title
+    | Tasks
+
+block content
+    +slide_column()
+        .l-column-fit
+            +task('basic')
+                | Split the application into plugins
+
+            +task('basic')
+                | Move the `/api/products` prefix to plugin configuration
+
+            +task('optional')
+                | Write single plugin tests
+
+            +task('optional')
+                | Create separate `package.json` files for each plugin

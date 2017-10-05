@@ -1,0 +1,41 @@
+extends ~layouts/columns
+
+block title
+    | Server configuration via manifest
+
+block content
+    +slide_column(60)
+        +code(null, 'javascript')
+            include:escape ./manifest.js
+
+    +slide_column(40).l-column-middle
+        +code_focus('1-16').current-only
+            :markdown-it
+                `manifest.js` or (`manifest.json`) file in the main directory
+
+        +code_focus('3-7').current-only
+            :markdown-it
+                Manifest contains the server connection configuration options
+                that would normally be passed to `server.connection([options])`.
+
+
+        +code_focus('9-16').current-only
+            :markdown-it
+                It also contains all the plugins along with their options.
+
+        +code_focus('19-23').current-only
+            :markdown-it
+                Instead of creating the server manually,
+                use the `glue` library to generate the server based on the manifest file.
+
+        +code_focus('26').current-only
+            :markdown-it
+                Import the exported `Server` definition.
+
+        +code_focus('25-34').current-only
+            :markdown-it
+                `glue.compose` (as well as most `hapi` methods) returns a promise.
+
+        +code_focus('29-33').current-only
+            :markdown-it
+                Once the server is ready, register routes as per usuall and start the server.

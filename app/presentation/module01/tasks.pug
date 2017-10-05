@@ -1,0 +1,25 @@
+extends ~layouts/columns
+
+block title
+    | Tasks
+
+block content
+    +slide_column()
+        .l-column-fit
+            +task('basic')
+                | Create a Hapi.js server that serves static files
+
+            +task('basic')
+                | Add `GET /api/products` endpoint that returns a list of products.
+                | Keep the products in a separate JSON file.
+
+            +task('optional')
+                | Generate the `index.html` file using `vision` (and templating engine of your choice)
+
+
+            +task('optional')
+                | Generate the `index.html` file using `vision` (and templating engine of your choice)
+
+            +task('optional')
+                | Create an in-memory `Products` database. It should be able to list, add, and remove products.
+

@@ -1,0 +1,46 @@
+extends ~layouts/columns
+
+block title
+    | Logging with `good`
+
+block content
+    +slide_column(60)
+        +code(null, 'javascript')
+            include:escape good.js
+
+    +slide_column(40).l-column-middle
+        +code_focus('1-3').current-only
+            :markdown-it
+                Install the `good` plugin and `good-console` reporter.
+
+        +code_focus('5-20').current-only
+            :markdown-it
+                Register routes
+
+        +code_focus('22-41').current-only
+            :markdown-it
+                Configuration object for the `good` plugin.
+
+        +code_focus('24-40').current-only
+            :markdown-it
+                Configure a new logger object. The configuration is an array of streams to pipie the logs through.
+
+        +code_focus('25-34').current-only
+            :markdown-it
+                `good-squeeze` is a utility that helps to filter stream events.
+
+        +code_focus('28-33').current-only
+            :markdown-it
+                This reporter will log out all `log`, `response`, `ops` and `error` events fired by the server.
+
+        +code_focus('35-37').current-only
+            :markdown-it
+                Next, format the logs with `good-console`.
+
+        +code_focus('38').current-only
+            :markdown-it
+                Finally, pass the logs to the `stdout` stream (the actual console).
+
+        +code_focus('43').current-only
+            :markdown-it
+                Register the plugin passing in the configuration object.

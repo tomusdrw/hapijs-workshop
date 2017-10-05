@@ -1,0 +1,23 @@
+extends ~layouts/columns
+
+block title
+    | Automatic docs with lout/hapi-swagger
+
+block content
+    +slide_column(60)
+        +code(null, 'javascript')
+            include:escape ./documentation.js
+
+    +slide_column(40).l-column-middle
+        +code_focus('1-11').current-only
+            :markdown-it
+                Standard installation and registration.
+
+        +code_focus('4-32').current-only
+            :markdown-it
+                Documentation plugins heavily leverage route and validation properties like `description`, `notes` and `tags`.
+
+        +code_focus('1-32').current-only
+            :markdown-it
+                Open `/docs` (with `lout`) or `/documentation` (`hapi-swagger`)
+

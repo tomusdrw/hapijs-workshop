@@ -1,0 +1,17 @@
+extends ~layouts/columns
+
+block title
+    | Tasks
+
+block content
+    +slide_column()
+        .l-column-fit
+            +task('basic')
+                | Generate docs using `lout` or `hapi-swagger`.
+                | Each route should have validation, tags, and descriptions.
+
+            +task('basic')
+                | Add `blankie` and define strict Content Security Policy
+
+            +task('optional')
+                | Add a server method and matching route. Use caching.
