@@ -1,6 +1,9 @@
 extends ~layouts/columns
 
 block title
+    div(style="float:right")
+        :markdown-it
+            [solutions](https://tomusdrw.github.io/devmeeting-hapijs/02-hapi/)
     | Tasks
 
 block content
@@ -31,4 +34,3 @@ block content
             +task('extra')
                 :markdown-it
                     Create an in-memory `Products` database. It should be able to list, add, and remove products
-
