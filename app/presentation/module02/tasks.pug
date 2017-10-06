@@ -7,19 +7,27 @@ block content
     +slide_column()
         .l-column-fit
             +task('basic')
-                | Log all requests with `good`
+              :markdown-it
+                Log all requests with `good` and print routing table with `blipp`
 
             +task('basic')
-                | Add `POST /api/products` route. Validate the payload and use `boom` for errors.
+              :markdown-it
+                Add `POST /api/products` route. Validate the payload and use `boom` for errors
+                
+                [Update the frontend](https://github.com/tomusdrw/devmeeting-hapijs/archive/frontend.zip)
 
-            +task('optional')
-                | Add `DELETE /api/products/{id}` route.
+            +task('basic')
+              :markdown-it
+                Test `GET /` and `POST /api/products` endpoints
 
-            +task('optional')
-                | Test `GET /` and `POST /api/products` endpoints
+            +task('advanced')
+              :markdown-it
+                Add `DELETE /api/products/{id}` route
 
-            +task('optional')
-                | Create a new product form
+            +task('advanced')
+              :markdown-it
+                Add `POST /api/cart` route
 
-            +task('optional')
-                | Get 100% test coverage (`lab -c`)
+            +task('extra')
+              :markdown-it
+                Get 100% test coverage (`lab -c`)

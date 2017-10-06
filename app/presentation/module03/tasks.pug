@@ -7,16 +7,25 @@ block content
     +slide_column()
         .l-column-fit
             +task('basic')
-                | Add `joi` validation for the `POST /api/prodcuts/` route.
+              :markdown-it
+                Add `joi` validation for the `POST /api/prodcuts/` route
 
             +task('basic')
-                | Add `DELETE /api/products/{id}` route and validate the param.
+              :markdown-it
+                Add `DELETE /api/products/{id}` route and validate the param
 
-            +task('optional')
-                | Reuse the `product` validation schema to validate the response to `GET /api/products`
+            +task('advanced')
+              :markdown-it
+                Reuse the `product` validation schema to validate the response to `GET /api/products`
 
-            +task('optional')
-                | Get 100% test coverage (`lab -c`)
+            +task('advanced')
+              :markdown-it
+                Add `joi` validation to all routes
 
-            +task('optional')
-                | Use either `loki` or `lowdb` and replace the in-memory database.
+            +task('extra')
+              :markdown-it
+                Get 100% test coverage (`lab -c`)
+
+            +task('extra')
+              :markdown-it
+                Use either `loki` or `lowdb` and replace the in-memory database

@@ -1,6 +1,6 @@
 // npm install --save good good-console good-squeeze
 
-const good = require('app/presentation/module02/good');
+const good = require('good');
 
 server.route([
     {
