@@ -51,6 +51,52 @@
     }
   }
 
+  &--advanced {
+    .dm-task__difficulty:before {
+      content: "Advanced"
+    }
+
+    &:after {
+      display: block;
+      visibility: visible;
+      content: "";
+
+      width: rem(100px);
+      height: rem(100px);
+
+      position: absolute;
+      left: rem(-30px);
+      top: rem(-3px);
+
+      background-image: url('~public/core/images/icon_intermediate_medium.png');
+      background-size: cover;
+      filter:hue-rotate(290deg);
+    }
+  }
+
+  &--extra {
+    .dm-task__difficulty:before {
+      content: "Extra"
+    }
+
+    &:after {
+      display: block;
+      visibility: visible;
+      content: "";
+
+      width: rem(100px);
+      height: rem(100px);
+
+      position: absolute;
+      left: rem(-30px);
+      top: rem(-3px);
+
+      background-image: url('~public/core/images/icon_intermediate_medium.png');
+      background-size: cover;
+      filter:hue-rotate(90deg);
+    }
+  }
+
   &--optional {
     .dm-task__difficulty:before {
       content: "Optional"

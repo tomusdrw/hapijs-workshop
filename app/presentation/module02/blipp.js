@@ -1,5 +1,5 @@
 // npm install --save blipp
-const blipp = require('app/presentation/module02/blipp');
+const blipp = require('blipp');
 
 server.route([
     {

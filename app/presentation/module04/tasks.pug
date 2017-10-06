@@ -1,19 +1,26 @@
 extends ~layouts/columns
 
 block title
+    div(style="float:right")
+        :markdown-it
+            [solutions](https://tomusdrw.github.io/devmeeting-hapijs/05-glue/)
     | Tasks
 
 block content
     +slide_column()
         .l-column-fit
             +task('basic')
-                | Split the application into plugins
+              :markdown-it
+                Split the application into plugins
 
             +task('basic')
-                | Move the `/api/products` prefix to plugin configuration
+              :markdown-it
+                Move the `/api/products` prefix to plugin configuration
 
-            +task('optional')
-                | Write single plugin tests
+            +task('advanced')
+              :markdown-it
+                Write separate tests for a single plugin
 
-            +task('optional')
-                | Create separate `package.json` files for each plugin
+            +task('extra')
+              :markdown-it
+                Create separate `package.json` files for each plugin

@@ -1,25 +1,36 @@
 extends ~layouts/columns
 
 block title
+    div(style="float:right")
+        :markdown-it
+            [solutions](https://tomusdrw.github.io/devmeeting-hapijs/02-hapi/)
     | Tasks
 
 block content
     +slide_column()
         .l-column-fit
             +task('basic')
-                | Create a Hapi.js server that serves static files
+                :markdown-it
+                    Create a Hapi.js server that serves static files
+                    
+                    Use [our shop frontend](https://github.com/tomusdrw/devmeeting-hapijs/archive/2e8a20879ca9eeffad18802d2c86169bf79a11d9.zip) or roll out your own
 
             +task('basic')
-                | Add `GET /api/products` endpoint that returns a list of products.
-                | Keep the products in a separate JSON file.
+                :markdown-it
+                    Add `GET /api/products` endpoint that returns a list of products
+                    
+                    Keep the products in a separate JSON file
 
-            +task('optional')
-                | Generate the `index.html` file using `vision` (and templating engine of your choice)
+            +task('advanced')
+                :markdown-it
+                    Generate the `index.html` file using `vision` (and templating engine of your choice)
 
+            +task('advanced')
+                :markdown-it
+                    Add `GET /api/cart` endpoint that returns a list of products in the cart
+                    
+                    Use [updated frontend with cart](https://github.com/tomusdrw/devmeeting-hapijs/archive/35255c13a58d4f9b3595b40f896020b27e73102a.zip)
 
-            +task('optional')
-                | Generate the `index.html` file using `vision` (and templating engine of your choice)
-
-            +task('optional')
-                | Create an in-memory `Products` database. It should be able to list, add, and remove products.
-
+            +task('extra')
+                :markdown-it
+                    Create an in-memory `Products` database. It should be able to list, add, and remove products
